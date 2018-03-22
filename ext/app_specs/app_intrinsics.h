@@ -1,4 +1,3 @@
-#include "ink.h"
 
 //cm_acc Header
 #ifndef APP_INTR_H_

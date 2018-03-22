@@ -1,7 +1,7 @@
 #include <msp430.h>
-#include "tester.h"
 #include <stdbool.h>
-#include "../timer/timer.h"
+#include "tester.h"
+
 #pragma PERSISTENT(noise_idx)
 unsigned int noise_idx = 0;
 
@@ -58,35 +58,6 @@ void eb_tester_reseter(float depletion_rate){
   reseter((uint16_t) energy_buffer/(depletion_rate));
   
   set_rate(depletion_rate);
-}
-
-
-
-void tester_autoreset(unsigned int interval, void* noise_pattern, uint8_t is_signed)
-{
-    int32_t ccr;
-
-    if (is_signed) {
-        ccr = interval + ((int16_t*) noise_pattern)[noise_idx];
-    }
-    else {
-        ccr = interval + ((uint16_t*) noise_pattern)[noise_idx];
-    }
-
-    if (ccr < 0) ccr = 0;
-    if (ccr > 0xFFFF) ccr = 0xFFFF;
-
-//    set_smclk_to_1_MHz();
-
-    TA0CCTL0 = CCIE;
-    TA0CCR0 = (uint16_t) ccr;
-    TA0CTL = TASSEL__SMCLK | MC__UP;
-
-    if (++noise_idx >= NOISE_LEN) {
-        noise_idx = 0;
-    }
-
-    __bis_SR_register(GIE);       // enable general interrupt
 }
 
 

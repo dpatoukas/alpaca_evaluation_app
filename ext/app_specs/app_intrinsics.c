@@ -1,6 +1,6 @@
 //cm_acc Header
-#include "adxl345_i2c_lib.h"
-#include "avg_filter.h"
+#include "../i2c_lib/adxl345_i2c_lib.h"
+#include "../filter/avg_filter.h"
 
 
 

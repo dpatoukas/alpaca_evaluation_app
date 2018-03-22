@@ -1,4 +1,6 @@
 //adxl345 I2C library
+#include <msp430.h>
+#include <stdint.h>
 #ifndef EUSCI_B0_I2C_H_
 #define EUSCI_B0_I2C_H_
 
@@ -8,8 +10,6 @@
 #define ADXL_CONF_REG 0x2d
 #define READ_REG	  0x32
 
-#include <msp430.h>
-#include <stdint.h>
 
 void i2c_init();
 void i2c_write(uint8_t slv_addr, uint8_t reg_addr, uint8_t data);

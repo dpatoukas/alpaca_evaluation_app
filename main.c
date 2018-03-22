@@ -105,7 +105,7 @@ void configure_mcu()
   P4DIR |=  (BIT3 | BIT2);
 
   P3OUT &= ~(BIT6|BIT0); 
-  P3DIR |=  (BIT6|BIT0) ;
+  P3DIR |=  (BIT6|BIT0);
 
   P2OUT &= ~(BIT6|BIT5|BIT2|BIT4); 
   P2DIR |=  (BIT6|BIT5|BIT2|BIT4);
@@ -138,12 +138,6 @@ void init(){
     P1IE |= BIT2;                              // P1.2 interrupt enabled high priority thread
     __delay_cycles(15);
 
-    uint16_t tmp = 100;
-    while(tmp--) 
-    {
-        rand();
-    }
-
     _ISR_flag = WAIT;
     
     if (!GV(inited))
@@ -152,25 +146,16 @@ void init(){
     	GV(flag) = WAIT;
     }
     __enable_interrupt();
-    //if interrupts are not available use this section
-//    if ((rand() % 2) == 0) {
-//
-//        __SIGNAL(THREAD2);
-//    }
-//
-//    else {
-//        __SIGNAL(THREAD3);
-//   }
 
-    TRANSITION_TO(task_schedule);
 }
+
 void mcu_sleep()
 {	
 #ifdef POWER_TEST
     eb_tester_reseter(0.3);
-	
+	P2OUT |= BIT2;
 	__bis_SR_register(LPM3_bits | GIE)
-    
+    P2OUT &= ~BIT2;
     eb_tester_reseter(1);
 #else
 	__bis_SR_register(LPM3_bits | GIE)
@@ -181,6 +166,25 @@ void mcu_sleep()
 
 void task_schedule()
 {
+	uint16_t tmp = 100;
+    while(tmp--) 
+    {
+        rand();
+    }
+
+#ifdef NO_INT_SOURCE
+//if interrupts are not available use this section
+	   if ((rand() % 2) == 0) {
+
+	       _ISR_flag = ACCEL;
+	   }
+
+	   else {
+
+	       _ISR_flag = MIC;
+	  }
+#endif
+
 	GV(flag) = _ISR_flag;
 	_ISR_flag = WAIT;
 
@@ -404,8 +408,6 @@ void task_sample_accel()
 
   P3OUT &= ~BIT0;
  
-			P3OUT &= ~BIT0;
-
   TRANSITION_TO(task_fft_accel);
 
 }
